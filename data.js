@@ -180,7 +180,8 @@ const i18n = {
     customMarkersImported: '{count} markers imported',
     invalidJsonFile: 'Invalid JSON file',
     mapInitError: 'Map startup error: {message}',
-    deleteMeasurePoint: 'Delete'
+    deleteMeasurePoint: 'Delete',
+    importSuccess: 'Import successful'
   },
   de: {
     title: 'World of Sea Battle',
@@ -331,7 +332,8 @@ const i18n = {
     customMarkersImported: '{count} Marker importiert',
     invalidJsonFile: 'Ungültige JSON-Datei',
     mapInitError: 'Fehler beim Kartenstart: {message}',
-    deleteMeasurePoint: 'Löschen'
+    deleteMeasurePoint: 'Löschen',
+    importSuccess: 'Import erfolgreich'
   }
 };
 // =============================================================================
@@ -584,7 +586,6 @@ const pois = [
   { type: "island", x: 1366, y: 341, id: "#54" },
   { type: "island", x: 1409, y: 1285, id: "#55" },
   { type: "island", x: 1433, y: 1059, id: "#56" },
-  { type: "island", x: 1435, y: 932, id: "#57" },
   { type: "island", x: 1443, y: 535, id: "#58" },
   { type: "island", x: 1485, y: 1152, id: "#59" },
   { type: "island", x: 1488, y: 214, id: "#60" },

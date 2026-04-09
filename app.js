@@ -1378,37 +1378,12 @@ function createIslandPopup(island) {
 
   let configHtml = '';
   if (isMine) {
-    const workshopOptions = getIslandWorkshopOptions(zoneName, markerData.workshop);
-    const productionOptions = getIslandProductionOptions(zoneName, markerData.production);
-    const wsOptions = workshopOptions.map(ws =>
-      `<option value="${ws}" ${markerData.workshop === ws ? 'selected' : ''}>${t(ws)}</option>`
-    ).join('');
-    const prodOptions = productionOptions.map(p =>
-      `<option value="${p}" ${markerData.production === p ? 'selected' : ''}>${t(p)}</option>`
-    ).join('');
-    const workshopNames = workshopOptions.map(ws => t(ws)).join(', ');
-    const productionNames = productionOptions.map(p => t(p)).join(', ');
-
     configHtml = `
     <div class="popup-section">
-      <div class="popup-helptext">${t('knownIslandWorkshops')} (${tf('workshopZoneHint', { zone: zoneName || t('unknownZone') })}): ${workshopNames}</div>
-      <div class="popup-helptext">${t('knownIslandProductions')}: ${productionNames}</div>
-      <div class="popup-config-grid">
-        <div class="popup-config-row">
-          <span class="popup-config-label">🔧 ${t('workshop')}:</span>
-          <select class="island-workshop-select popup-select">
-            <option value="">${t('none')}</option>
-            ${wsOptions}
-          </select>
-        </div>
-        <div class="popup-config-row">
-          <span class="popup-config-label">🏭 ${t('productionLabel')}:</span>
-          <select class="island-production-select popup-select">
-            <option value="">${t('none')}</option>
-            ${prodOptions}
-          </select>
-        </div>
-      </div>
+      <div class="popup-helptext">${t('selectWorkshop')}</div>
+      <div class="popup-chip-grid island-workshop-chips"></div>
+      <div class="popup-helptext" style="margin-top:8px">${t('selectProduction')}</div>
+      <div class="popup-chip-grid island-production-chips"></div>
     </div>`;
   }
 
@@ -1427,23 +1402,54 @@ function createIslandPopup(island) {
     container.querySelector('.island-unmark-btn')?.addEventListener('click', () => {
       unmarkMyPOI('island', island.id);
     });
-    container.querySelector('.island-workshop-select')?.addEventListener('change', (e) => {
-      markerData.workshop = e.target.value || null;
-      persistMyIslands();
-      refreshPOIStyles();
-      showToast(e.target.value
-        ? tf('workshopSelected', { name: t(e.target.value) })
-        : t('workshopRemoved'),
-        e.target.value ? 'success' : 'warning');
+
+    // Workshop chips (single-select toggle)
+    const wsContainer = container.querySelector('.island-workshop-chips');
+    const workshopOptions = getIslandWorkshopOptions(zoneName, markerData.workshop);
+    workshopOptions.forEach(ws => {
+      const chip = document.createElement('button');
+      const isActive = markerData.workshop === ws;
+      chip.type = 'button';
+      chip.className = 'workshop-chip' + (isActive ? ' active' : '');
+      chip.textContent = t(ws);
+      chip.addEventListener('click', () => {
+        const newValue = markerData.workshop === ws ? null : ws;
+        markerData.workshop = newValue;
+        persistMyIslands();
+        refreshPOIStyles();
+        showToast(newValue
+          ? tf('workshopSelected', { name: t(newValue) })
+          : t('workshopRemoved'),
+          newValue ? 'success' : 'warning');
+        // Re-render popup
+        const marker = window.poiMarkers['island_' + island.id];
+        if (marker) { marker.closePopup(); setTimeout(() => marker.openPopup(), 50); }
+      });
+      wsContainer.appendChild(chip);
     });
-    container.querySelector('.island-production-select')?.addEventListener('change', (e) => {
-      markerData.production = e.target.value || null;
-      persistMyIslands();
-      refreshPOIStyles();
-      showToast(e.target.value
-        ? tf('productionSelected', { name: t(e.target.value) })
-        : t('productionRemoved'),
-        e.target.value ? 'success' : 'warning');
+
+    // Production chips (single-select toggle)
+    const prodContainer = container.querySelector('.island-production-chips');
+    const productionOptions = getIslandProductionOptions(zoneName, markerData.production);
+    productionOptions.forEach(p => {
+      const chip = document.createElement('button');
+      const isActive = markerData.production === p;
+      chip.type = 'button';
+      chip.className = 'workshop-chip' + (isActive ? ' active' : '');
+      chip.textContent = t(p);
+      chip.addEventListener('click', () => {
+        const newValue = markerData.production === p ? null : p;
+        markerData.production = newValue;
+        persistMyIslands();
+        refreshPOIStyles();
+        showToast(newValue
+          ? tf('productionSelected', { name: t(newValue) })
+          : t('productionRemoved'),
+          newValue ? 'success' : 'warning');
+        const marker = window.poiMarkers['island_' + island.id];
+        if (marker) { marker.closePopup(); setTimeout(() => marker.openPopup(), 50); }
+      });
+      prodContainer.appendChild(chip);
     });
   } else {
     container.querySelector('.island-mark-btn')?.addEventListener('click', () => {
@@ -2900,17 +2906,119 @@ function restoreUrlState() {
 // =============================================================================
 // EXPORT/IMPORT
 // =============================================================================
+function buildExportPayload() {
+  return {
+    _format: 'wosb-full-export',
+    _version: 2,
+    _exportedAt: new Date().toISOString(),
+    customMarkers: customMarkers,
+    myIslands: myIslands,
+    myMines: myMines,
+    myPrintshops: myPrintshops,
+    myPorts: myPorts,
+    distanceRoutes: distanceRoutes.map(route => ({
+      id: route.id,
+      points: route.points.map(p => ({ lat: p.lat, lng: p.lng }))
+    }))
+  };
+}
+
+function applyImportPayload(payload) {
+  const importedMarkers = Array.isArray(payload.customMarkers) ? payload.customMarkers : [];
+  customLayerGroup.clearLayers();
+  customMarkers = importedMarkers.map((m, i) => ({
+    id: m.id || Date.now() + i,
+    lat: Number(m.lat),
+    lng: Number(m.lng),
+    label: m.label || t('customMarkerDefault')
+  })).filter(m => Number.isFinite(m.lat) && Number.isFinite(m.lng));
+  customMarkers.forEach(cm => addCustomMarkerToMap(cm));
+  saveCustomMarkers();
+
+  if (Array.isArray(payload.myIslands)) {
+    myIslands = payload.myIslands.map(syncIslandMetadata);
+    persistMyIslands();
+  }
+
+  if (Array.isArray(payload.myMines)) {
+    myMines = payload.myMines;
+    localStorage.setItem('wosb-my-mines', JSON.stringify(myMines));
+  }
+
+  if (Array.isArray(payload.myPrintshops)) {
+    myPrintshops = payload.myPrintshops;
+    localStorage.setItem('wosb-my-printshops', JSON.stringify(myPrintshops));
+  }
+
+  if (Array.isArray(payload.myPorts)) {
+    myPorts = payload.myPorts;
+    localStorage.setItem('wosb-my-ports', JSON.stringify(myPorts));
+  }
+
+  if (Array.isArray(payload.distanceRoutes)) {
+    distanceRoutes.forEach(r => { if (r.layerGroup) map.removeLayer(r.layerGroup); });
+    distanceRoutes = [];
+    payload.distanceRoutes.forEach((route, idx) => {
+      if (!route || !Array.isArray(route.points)) return;
+      const points = route.points
+        .map(p => L.latLng(Number(p.lat), Number(p.lng)))
+        .filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lng));
+      if (points.length < 2) return;
+      const restored = {
+        id: Number(route.id) || (Date.now() + idx),
+        points,
+        layerGroup: L.layerGroup()
+      };
+      distanceRoutes.push(restored);
+      renderSavedRoute(restored);
+      if (savedDistanceRoutesVisible) restored.layerGroup.addTo(map);
+    });
+    saveDistanceRoutes();
+  }
+
+  buildMeasureSnapTargets();
+  autoExpandPersonalPOIs();
+  refreshPOIStyles();
+
+  const counts = [];
+  if (customMarkers.length) counts.push(customMarkers.length + ' ' + t('customMarkers'));
+  if (myIslands.length) counts.push(myIslands.length + ' ' + t('islands'));
+  if (myMines.length) counts.push(myMines.length + ' ' + t('production'));
+  if (myPrintshops.length) counts.push(myPrintshops.length + ' ' + t('printshop'));
+  if (myPorts.length) counts.push(myPorts.length + ' ' + t('ports'));
+  if (distanceRoutes.length) counts.push(distanceRoutes.length + ' ' + t('savedRoutes'));
+  return counts.length ? counts.join(', ') : '0';
+}
+
 function initExportImport() {
-  document.getElementById('btn-export')?.addEventListener('click', () => {
-    const data = JSON.stringify(customMarkers, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+  document.getElementById('btn-export')?.addEventListener('click', async () => {
+    const payload = buildExportPayload();
+    const json = JSON.stringify(payload, null, 2);
+
+    // Modern browsers: native "Save As" dialog (works on file:// too)
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: 'wosb-export.json',
+          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(json);
+        await writable.close();
+        showToast('Export gespeichert', 'success');
+        return;
+      } catch (e) {
+        if (e.name === 'AbortError') return; // user cancelled
+      }
+    }
+
+    // Fallback for older browsers
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'wosb-custom-markers.json';
+    a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+    a.download = 'wosb-export.json';
     a.click();
-    URL.revokeObjectURL(url);
   });
+
   document.getElementById('btn-import')?.addEventListener('click', () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -2921,22 +3029,19 @@ function initExportImport() {
       const reader = new FileReader();
       reader.onload = ev => {
         try {
-          const imported = JSON.parse(ev.target.result);
-          if (!Array.isArray(imported)) throw new Error('invalid');
-          customLayerGroup.clearLayers();
-          customMarkers = imported.map((marker, index) => ({
-            id: marker.id || Date.now() + index,
-            lat: Number(marker.lat),
-            lng: Number(marker.lng),
-            label: marker.label || t('customMarkerDefault')
-          })).filter(marker => Number.isFinite(marker.lat) && Number.isFinite(marker.lng));
-          customMarkers.forEach(cm => addCustomMarkerToMap(cm));
-          saveCustomMarkers();
-          autoExpandPersonalPOIs();
-          refreshPOIStyles();
-          showToast(tf('customMarkersImported', { count: customMarkers.length }), 'success');
+          const raw = JSON.parse(ev.target.result);
+          let payload;
+          if (raw && raw._format === 'wosb-full-export') {
+            payload = raw;
+          } else if (Array.isArray(raw)) {
+            payload = { customMarkers: raw };
+          } else {
+            throw new Error('invalid');
+          }
+          const summary = applyImportPayload(payload);
+          showToast(t('importSuccess') + ': ' + summary, 'success');
         } catch (err) {
-          console.error(err);
+          console.error('Import failed:', err);
           showError(t('invalidJsonFile'));
         }
       };

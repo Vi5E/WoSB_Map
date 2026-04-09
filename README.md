@@ -1,125 +1,133 @@
-# WoSB Map
+# WoSB Map — Interaktive Karte für World of Sea Battle
 
-Inoffizielle interaktive Karte fuer World of Sea Battle.
+Inoffizielle, interaktive Karte für das MMO **World of Sea Battle** (Thera Interactive).  
+Funktioniert komplett im Browser — keine Installation, kein Login, kein Server nötig.
 
-## Inhalt
+---
 
-Diese GitHub-Pages-Version enthaelt nur die Dateien, die fuer die Website noetig sind:
+## Was ist das?
 
-- `index.html`
-- `app.js`
-- `data.js`
-- `style.css`
-- Ordner `assets`
-- Ordner `vendor`
-- Datei `.nojekyll`
+Eine vollständige Übersichtskarte der Spielwelt mit allen bekannten Häfen, Leuchttürmen, persönlichen Inseln, Produktionsstätten, Altären, Festungen und Schnellreiserouten. Die Karte dient als Nachschlagewerk, Planungstool und persönliches Tracking-System für deine Spielressourcen.
 
-## Website auf GitHub Pages veroeffentlichen
+---
 
-### 1. Repository auf GitHub erstellen
+## Features
 
-Beim Erstellen des Repositories:
+### 🗺️ Kartenebenen
 
-- `Repository name`: `WoSB_Map`
-- `Description`: `Unofficial interactive map for World of Sea Battle`
-- `Visibility`: `Public`
-- `Add README`: `Off`
-- `Add .gitignore`: `No .gitignore`
-- `Add license`: `No license`
+Die Karte zeigt verschiedene Ebenen, die einzeln ein- und ausgeblendet werden können:
 
-Dann auf `Create repository` klicken.
+- **Häfen** — alle 42 Häfen mit Typ (normal, klein, befestigt, Piratenhafen), Region und Position
+- **Leuchttürme** — 111 Leuchttürme als Orientierungspunkte
+- **Schnellreiserouten** — animierte Verbindungslinien zwischen Häfen
+- **Persönliche Inseln** — 66 bekannte Insel-Positionen
+- **Produktionsstätten** — Kohle, Kupfer, Eisen, Holz, Harz, Rum, Wasser, Farmen
+- **Altäre** — 5 bekannte Altar-Positionen
+- **Festungen** — 28 Festungs-Positionen
+- **PVP-Kreisgrenze** — visuelle Grenze der PVP-Zone
+- **Freie Marker** — eigene Marker per Rechtsklick setzen
 
-### 2. Diese Dateien hochladen
+### 🏝️ Persönliches Tracking
 
-Oeffne den Ordner dieser GitHub-Pages-Version und lade nur dessen Inhalt hoch:
+Du kannst deine eigenen Spielressourcen auf der Karte markieren und verwalten:
 
-- `index.html`
-- `app.js`
-- `data.js`
-- `style.css`
-- `assets`
-- `vendor`
-- `.nojekyll`
-- `README.md`
+#### Persönliche Inseln
+- Insel als „meine" markieren und benennen
+- **Werkstatt wählen** per Chip-Auswahl: Balkenwerkstatt, Weberei, Bronzeschmelze, Plattenwerkstatt, Schottwerkstatt, Proviantproduktion
+- **Produktion wählen** per Chip-Auswahl: Bier, Getreide, Vorräte, Zucker
+- Automatische Region- und nächster-Hafen-Erkennung
+- 7nm-Radius-Kreis zur Visualisierung der Minenreichweite
 
-Wichtig:
+#### Häfen
+- **Lager** setzen/entfernen (Warehouse-Tracking)
+- **Werkstätten wählen** per Chip-Auswahl (max. 2 pro Hafen): Balken, Bronze, Platte, Segeltuch, Schott, Gießerei
 
-- Nicht den uebergeordneten Projektordner hochladen
-- Keine Backups, ZIP-Dateien, `_restore`-Ordner oder Temp-Dateien hochladen
-- Die `index.html` muss im Repository direkt im Hauptordner liegen
+#### Produktionsstätten & Druckereien
+- Minen, Farmen und Druckereien als „meine" markieren
+- Maximale Anzahl wird automatisch begrenzt
 
-### 3. Dateien im Repository hochladen
+### 📏 Entfernungsmessung
 
-Nach dem Erstellen des Repositories:
+- **Strg gedrückt halten** und auf die Karte klicken, um Messpunkte zu setzen
+- Entfernungen werden in Seemeilen (nm) angezeigt
+- Messpunkte rasten an Häfen, Inseln und Produktionsstätten ein (Snapping)
+- Gespeicherte Routen als eigene Kartenebene
 
-1. Im neuen Repository auf `uploading an existing file` klicken
-2. Den kompletten Inhalt dieses Ordners in das Browserfenster ziehen
-3. Unten eine Commit-Nachricht eingeben, zum Beispiel:
-   `Initial GitHub Pages upload`
-4. Auf `Commit changes` klicken
+### 🔍 Suche
 
-### 4. GitHub Pages einschalten
+- Häfen, Inseln und Ressourcen durchsuchen
+- Unterstützt deutsche und englische Namen
+- Aliase für häufige Tippfehler (z.B. „Los Catuona" → Los Catuano)
+- Ergebnisse nach Typ kategorisiert (Hafen, Insel, Ressource, Altar, Festung)
 
-Im Repository:
+### 💾 Export / Import
 
-1. Auf `Settings` gehen
-2. Links `Pages` auswaehlen
-3. Bei `Build and deployment` folgendes einstellen:
-   - `Source`: `Deploy from a branch`
-   - `Branch`: `main`
-   - Ordner: `/ (root)`
-4. Auf `Save` klicken
+- **Marker exportieren** — speichert ALLE persönlichen Daten als `.json`-Datei:
+  - Freie Marker, persönliche Inseln, Minen, Druckereien
+  - Hafen-Einstellungen (Lager, Werkstätten)
+  - Gespeicherte Routen
+- **Marker importieren** — stellt alle Daten aus einer Export-Datei wieder her
+- Rückwärtskompatibel mit älteren Export-Dateien
 
-Danach baut GitHub die Seite automatisch.
+### 🌙 Dark Mode
 
-### 5. Website aufrufen
+- Umschaltbar über den Button unten rechts
+- Dunkles Kartendesign mit angepassten Farben
 
-Die Seite ist danach normalerweise unter dieser Adresse erreichbar:
+### 🌐 Zweisprachig
 
-`https://vi5e.github.io/WoSB_Map/`
+- Deutsch und Englisch umschaltbar
+- Alle UI-Texte, Hafennamen und Tooltips in beiden Sprachen
 
-Falls sie nicht sofort sichtbar ist:
+### 📱 Responsive
 
-- 1 bis 5 Minuten warten
-- die Seite neu laden
-- in `Settings > Pages` pruefen, ob die Deployment-URL angezeigt wird
+- Funktioniert auf Desktop und Mobilgeräten
+- Sidebar auf Mobilgeräten ein-/ausklappbar
+- Touch-Gesten für Zoom und Pan
 
-## Was die Website kann
+---
 
-- Interaktive Karte anzeigen
-- Sprachumschaltung Deutsch/Englisch
-- Eigene Marker im Browser speichern
-- Layer ein- und ausblenden
-- Entfernungen messen
-- Impressum/Fanprojekt-Hinweis anzeigen
+## Bedienung
 
-## Wichtige Hinweise
+| Aktion | Eingabe |
+|--------|---------|
+| Karte bewegen | Linke Maustaste ziehen |
+| Zoomen | Mausrad oder +/- Buttons |
+| Popup öffnen | Hafen, Insel oder POI anklicken |
+| Marker setzen | Rechtsklick auf die Karte |
+| Koordinaten kopieren | Rechtsklick → „Koordinaten kopieren" |
+| Entfernung messen | Strg + Klick |
+| Dark Mode | Button unten rechts (☀/🌙) |
+| Sprache wechseln | DE / EN Buttons oben links |
 
-### Browser-Speicher
+---
 
-Eigene Marker und einige Einstellungen werden nur lokal im Browser gespeichert.
+## Meine Standorte (Sidebar)
+
+Im Bereich „Meine Standorte" werden alle markierten Elemente übersichtlich aufgelistet:
+
+- **Persönliche Inseln** — mit Name, Werkstatt und Produktion
+- **Häfen** — mit Werkstätten und Lagerstatus
+- **Produktionsstätten** — markierte Minen und Farmen
+- **Freie Marker** — selbst gesetzte Marker
+
+Die Liste ist nach Typ filterbar und zeigt die Koordinaten jedes Eintrags. Ein Klick auf einen Eintrag zentriert die Karte auf den entsprechenden Punkt.
+
+---
+
+## Datenspeicherung
+
+Alle persönlichen Daten (Marker, Inseln, Hafen-Einstellungen, Routen) werden **ausschließlich lokal im Browser** gespeichert (`localStorage`). Es werden keine Daten an einen Server gesendet.
 
 Das bedeutet:
+- Deine Daten sind nur in dem Browser verfügbar, in dem du sie erstellt hast
+- Ein Browserwechsel oder das Löschen der Browserdaten löscht deine Markierungen
+- Nutze die **Export-Funktion**, um deine Daten zu sichern und auf andere Geräte zu übertragen
 
-- sichtbar nur auf dem Geraet und im Browser, in dem du sie erstellt hast
-- nicht automatisch mit GitHub synchronisiert
-- nicht automatisch fuer andere Besucher sichtbar
+---
 
-### Fanprojekt-Hinweis
+## Rechtlicher Hinweis
 
-Diese Seite ist ein inoffizielles Fanprojekt. Rechte an World of Sea Battle und zugehoerigen Inhalten liegen bei den jeweiligen Rechteinhabern.
-
-### Rechtlicher Hinweis
-
-Der auf der Seite eingebaute Hinweis ist ein Fanprojekt-Disclaimer. Wenn du die Seite aus Deutschland oeffentlich betreibst, kann trotzdem ein vollstaendiges Impressum mit echten Anbieterangaben erforderlich sein.
-
-## Dateien spaeter aktualisieren
-
-Wenn du spaeter etwas aendern willst:
-
-1. Die geaenderten Dateien lokal anpassen
-2. Im GitHub-Repository `Add file` > `Upload files` waehlen
-3. Alte Dateien durch neue ersetzen
-4. Commit erstellen
-
-GitHub Pages aktualisiert die Seite danach automatisch.
+Diese Website ist ein **inoffizielles Fanprojekt**.  
+Alle Rechte an World of Sea Battle und allen zugehörigen Namen, Logos, Grafiken, Marken und Spielinhalten liegen bei den jeweiligen Rechtsinhabern, insbesondere bei **Thera Interactive** als Entwickler und Publisher.  
+Dieses Projekt ist weder mit Thera Interactive verbunden noch von Thera Interactive unterstützt, gesponsert oder autorisiert.
