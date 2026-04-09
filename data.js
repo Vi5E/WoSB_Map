@@ -127,6 +127,7 @@ const i18n = {
     nearestPort: 'Nearest port',
     unknownZone: 'Unknown zone',
     knownIslandWorkshops: 'Known island workshops',
+    knownIslandProductions: 'Known island productions',
     workshopZoneHint: 'Zone-based options for {zone}',
     languageChangedEnglish: 'Language: English',
     languageChangedGerman: 'Language: Deutsch',
@@ -277,6 +278,7 @@ const i18n = {
     nearestPort: 'Nächster Hafen',
     unknownZone: 'Unbekannte Region',
     knownIslandWorkshops: 'Bekannte Insel-Werkstätten',
+    knownIslandProductions: 'Bekannte Insel-Produktionen',
     workshopZoneHint: 'Regionale Optionen für {zone}',
     languageChangedEnglish: 'Sprache: Englisch',
     languageChangedGerman: 'Sprache: Deutsch',
@@ -436,6 +438,7 @@ const portSearchAliases = {
 };
 
 const DEFAULT_ISLAND_WORKSHOPS = ['ws_plank', 'ws_weaving', 'ws_bronze', 'ws_plate', 'ws_bulkhead', 'ws_provision'];
+const DEFAULT_ISLAND_PRODUCTIONS = ['prod_beer', 'prod_grain', 'prod_supplies', 'prod_sugar'];
 
 const islandWorkshopOptionsByZone = {
   default: DEFAULT_ISLAND_WORKSHOPS,
@@ -454,6 +457,28 @@ const islandWorkshopOptionsByZone = {
   "Sea of Nozula": DEFAULT_ISLAND_WORKSHOPS,
   "Stevenson Islands": DEFAULT_ISLAND_WORKSHOPS,
   "Strait of a Thousand Dead Man": DEFAULT_ISLAND_WORKSHOPS
+};
+
+// Community-derived production options by zone. I could not verify a complete
+// official island-production table online, so this mapping intentionally prefers
+// broader option sets over overly restrictive dropdowns.
+const islandProductionOptionsByZone = {
+  default: DEFAULT_ISLAND_PRODUCTIONS,
+  "Antillean Islands": DEFAULT_ISLAND_PRODUCTIONS,
+  "Aurora Islands": DEFAULT_ISLAND_PRODUCTIONS,
+  "Casa Nuevo": DEFAULT_ISLAND_PRODUCTIONS,
+  "Danamar": DEFAULT_ISLAND_PRODUCTIONS,
+  "Dragon Islands": DEFAULT_ISLAND_PRODUCTIONS,
+  "Friesland": DEFAULT_ISLAND_PRODUCTIONS,
+  "Heart of the Abyss": DEFAULT_ISLAND_PRODUCTIONS,
+  "Islas Dias Augado": DEFAULT_ISLAND_PRODUCTIONS,
+  "Khalij Albaharad": DEFAULT_ISLAND_PRODUCTIONS,
+  "Lagonav": DEFAULT_ISLAND_PRODUCTIONS,
+  "Lagrimas de Viudas": DEFAULT_ISLAND_PRODUCTIONS,
+  "Sea of Conqustadors": DEFAULT_ISLAND_PRODUCTIONS,
+  "Sea of Nozula": DEFAULT_ISLAND_PRODUCTIONS,
+  "Stevenson Islands": DEFAULT_ISLAND_PRODUCTIONS,
+  "Strait of a Thousand Dead Man": DEFAULT_ISLAND_PRODUCTIONS
 };
 // =============================================================================
 // LIGHTHOUSE DATA
@@ -737,6 +762,9 @@ const fastTravelRoutes = [
   { from: "Nisogora", to: "Nordberg", points: [[166, 434], [217, 301]] },
   { from: "Nisogora", to: "Cursed City", points: [[166, 434], [101, 636]] },
 ];
+
+
+
 
 
 

@@ -727,6 +727,56 @@ function getIslandWorkshopOptions(zoneName, currentValue = null) {
   if (currentValue && !options.includes(currentValue)) options.unshift(currentValue);
   return [...new Set(options)];
 }
+function getIslandProductionOptions(zoneName, currentValue = null) {
+  const options = [...(islandProductionOptionsByZone[zoneName] || islandProductionOptionsByZone.default || ISLAND_PRODUCTIONS)];
+  if (currentValue && !options.includes(currentValue)) options.unshift(currentValue);
+  return [...new Set(options)];
+}
+
+function getPopupPanPadding() {
+  const sidebar = document.getElementById('sidebar');
+  const mobileMenu = document.querySelector('.mobile-menu-toggle');
+  const sidebarWidth = sidebar ? Math.ceil(sidebar.getBoundingClientRect().width) : 0;
+  const sidebarOpen = !!sidebar && (!sidebar.classList.contains('collapsed') || sidebar.classList.contains('mobile-open'));
+  const mobileToggleOffset = mobileMenu ? Math.ceil(mobileMenu.getBoundingClientRect().right) + 16 : 20;
+  const leftPadding = sidebarOpen ? Math.max(sidebarWidth + 24, mobileToggleOffset) : mobileToggleOffset;
+  return {
+    paddingTopLeft: L.point(leftPadding, 20),
+    paddingBottomRight: L.point(20, 20)
+  };
+}
+
+function keepPopupInViewport(popup) {
+  if (!map || !popup || typeof popup.getLatLng !== 'function') return;
+  requestAnimationFrame(() => {
+    if (!map || !popup.isOpen || !popup.isOpen()) return;
+    const popupEl = popup.getElement ? popup.getElement() : popup._container;
+    if (!popupEl) return;
+    const mapContainer = map.getContainer();
+    const mapRect = mapContainer.getBoundingClientRect();
+    const popupRect = popupEl.getBoundingClientRect();
+    const padding = getPopupPanPadding();
+    const padLeft = padding.paddingTopLeft.x;
+    const padTop = padding.paddingTopLeft.y;
+    const padRight = padding.paddingBottomRight.x;
+    const padBottom = padding.paddingBottomRight.y;
+    let dx = 0;
+    let dy = 0;
+    if (popupRect.left < mapRect.left + padLeft) {
+      dx = popupRect.left - (mapRect.left + padLeft);
+    } else if (popupRect.right > mapRect.right - padRight) {
+      dx = popupRect.right - (mapRect.right - padRight);
+    }
+    if (popupRect.top < mapRect.top + padTop) {
+      dy = popupRect.top - (mapRect.top + padTop);
+    } else if (popupRect.bottom > mapRect.bottom - padBottom) {
+      dy = popupRect.bottom - (mapRect.bottom - padBottom);
+    }
+    if (dx !== 0 || dy !== 0) {
+      map.panBy([dx, dy], { animate: true });
+    }
+  });
+}
 function updateLayerCounts() {
   const counts = {
     ports: ports.length,
@@ -968,6 +1018,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // MAP SETUP
 // =============================================================================
 function initMap() {
+  // Disable Leaflet's built-in popup autoPan – our keepPopupInViewport handles
+  // panning based on the actual popup DOM rect which is more accurate
+  L.Popup.prototype.options.autoPan = false;
+
   map = L.map('map', {
     crs: L.CRS.Simple,
     minZoom: MIN_ZOOM,
@@ -1000,7 +1054,6 @@ function initMap() {
   overlayLayers.baseMap = createProgressiveImageOverlay('baseMap', bounds);
   overlayLayers.baseMap.addTo(map);
   map.fitBounds(bounds);
-  map.setMaxBounds([[-MAP_HEIGHT - 200, -200], [200, MAP_WIDTH + 200]]);
   currentStatusDisplayMode = getStatusDisplayMode();
   map.on('moveend zoomend', saveUrlState);
   map.on('zoomend', () => {
@@ -1009,6 +1062,10 @@ function initMap() {
       currentStatusDisplayMode = nextMode;
       if (typeof refreshPOIStyles === 'function') refreshPOIStyles();
     }
+  });
+  map.on('popupopen', e => keepPopupInViewport(e.popup));
+  window.addEventListener('resize', () => {
+    if (map && map._popup) keepPopupInViewport(map._popup);
   });
 }
 
@@ -1322,17 +1379,20 @@ function createIslandPopup(island) {
   let configHtml = '';
   if (isMine) {
     const workshopOptions = getIslandWorkshopOptions(zoneName, markerData.workshop);
+    const productionOptions = getIslandProductionOptions(zoneName, markerData.production);
     const wsOptions = workshopOptions.map(ws =>
       `<option value="${ws}" ${markerData.workshop === ws ? 'selected' : ''}>${t(ws)}</option>`
     ).join('');
-    const prodOptions = ISLAND_PRODUCTIONS.map(p =>
+    const prodOptions = productionOptions.map(p =>
       `<option value="${p}" ${markerData.production === p ? 'selected' : ''}>${t(p)}</option>`
     ).join('');
     const workshopNames = workshopOptions.map(ws => t(ws)).join(', ');
+    const productionNames = productionOptions.map(p => t(p)).join(', ');
 
     configHtml = `
     <div class="popup-section">
       <div class="popup-helptext">${t('knownIslandWorkshops')} (${tf('workshopZoneHint', { zone: zoneName || t('unknownZone') })}): ${workshopNames}</div>
+      <div class="popup-helptext">${t('knownIslandProductions')}: ${productionNames}</div>
       <div class="popup-config-grid">
         <div class="popup-config-row">
           <span class="popup-config-label">🔧 ${t('workshop')}:</span>
@@ -2889,6 +2949,10 @@ function initExportImport() {
 // HELPERS
 // =============================================================================
 function hideLoading() { const el = document.querySelector('.map-loading'); if (el) el.style.display = 'none'; }
+
+
+
+
 
 
 

@@ -1321,6 +1321,7 @@ html, body {
   box-shadow: 0 20px 60px rgba(0,0,0,0.36), inset 0 1px 0 rgba(255,255,255,0.12) !important;
   color: var(--text-primary) !important;
   padding: 0 !important;
+  max-width: min(360px, calc(100vw - 24px)) !important;
 }
 
 .leaflet-popup-pane {
@@ -1386,6 +1387,11 @@ html, body {
 /* Popup content */
 .popup-content {
   padding: 14px 16px;
+  max-width: min(328px, calc(100vw - 56px));
+  max-height: min(62vh, 420px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
 }
 
 .popup-content .popup-title {
@@ -1591,11 +1597,50 @@ html[data-route-animations="off"] .leaflet-overlay-pane path.animated-route {
   color: var(--text-muted);
 }
 
-.popup-content .popup-actions {
-  margin-top: 8px;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+
+
+.popup-config-row .popup-select {
+  flex: 1;
+}
+
+.popup-select {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 8px 36px 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(123, 163, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(28, 36, 52, 0.92), rgba(18, 24, 36, 0.9)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.2 4.2 6 8l3.8-3.8' fill='none' stroke='rgba(220,228,242,0.82)' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center / 12px 12px;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.24), 0 10px 24px rgba(0,0,0,0.18);
+  backdrop-filter: blur(12px) saturate(1.08);
+  -webkit-backdrop-filter: blur(12px) saturate(1.08);
+  appearance: none;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition), transform var(--transition);
+}
+
+.popup-select:hover {
+  border-color: rgba(151, 187, 255, 0.28);
+  background:
+    linear-gradient(180deg, rgba(34, 43, 61, 0.96), rgba(22, 29, 44, 0.94)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.2 4.2 6 8l3.8-3.8' fill='none' stroke='rgba(236,242,250,0.92)' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center / 12px 12px;
+}
+
+.popup-select:focus {
+  outline: none;
+  border-color: rgba(96,165,250,0.34);
+  box-shadow: 0 0 0 3px rgba(96,165,250,0.16), inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 24px rgba(0,0,0,0.18);
+}
+
+.popup-select option {
+  background: #171d28;
+  color: #e8ecf4;
 }
 
 .popup-content-compact {
@@ -2106,6 +2151,9 @@ html[data-route-animations="off"] .leaflet-overlay-pane path.animated-route {
   .layer-section { padding: 3px 10px; }
   .collapsible-header { padding: 6px 10px; }
 }
+
+
+
 
 
 
