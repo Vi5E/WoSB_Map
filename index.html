@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World of Sea Battle - Interactive Map</title>
+  <meta name="description"
+    content="Interactive map for World of Sea Battle with ports, lighthouses, production sites, altars, forts, and more.">
+  <link rel="icon" href="assets/ikona.png" type="image/png">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="vendor/markercluster/MarkerCluster.css" />
+  <link rel="stylesheet" href="vendor/markercluster/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="map-loading">Loading map...</div>
+  <div id="map"></div>
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <div class="header-top-row">
+        <div>
+          <h1><span class="brand-mark" aria-hidden="true">&#9875;</span><span class="brand-title-text">World of Sea
+              Battle</span></h1>
+          <div class="subtitle">Interactive Map by Vi5E</div>
+        </div>
+        <div class="lang-toggle">
+          <button class="lang-btn" id="btn-lang-de">DE</button>
+          <button class="lang-btn" id="btn-lang-en">EN</button>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="sidebar-content">
+      <div class="layer-section">
+        <button type="button" class="collapsible-header expanded" id="map-layers-header" aria-expanded="true">
+          <span class="chevron">&#9654;</span>
+          <span class="layer-section-title" id="section-title-layers" style="padding: 0;">Map Layers</span>
+        </button>
+        <div class="collapsible-body expanded">
+
+          <button type="button" class="layer-toggle active" id="toggle-ports" aria-pressed="true">
+            <span class="toggle-dot" style="background: var(--color-ports);"></span>
+            <span class="toggle-label">Ports</span>
+            <span class="toggle-count" data-count-key="ports">42</span>
+            <span class="toggle-shortcut">1</span>
+          </button>
+
+          <button type="button" class="layer-toggle active" id="toggle-lighthouses" aria-pressed="true">
+            <span class="toggle-dot" style="background: var(--color-lighthouses);"></span>
+            <span class="toggle-label">Lighthouses</span>
+            <span class="toggle-count" data-count-key="lighthouses">111</span>
+            <span class="toggle-shortcut">2</span>
+          </button>
+
+          <button type="button" class="layer-toggle" id="toggle-routes" aria-pressed="false">
+            <span class="toggle-dot" style="background: var(--color-routes);"></span>
+            <span class="toggle-label">Fast Travel Routes</span>
+            <span class="toggle-shortcut">3</span>
+          </button>
+
+          <button type="button" class="layer-toggle active" id="toggle-distance-routes" aria-pressed="true">
+            <span class="toggle-dot" style="background: #f43f5e;"></span>
+            <span class="toggle-label">Saved Routes</span>
+          </button>
+
+          <button type="button" class="layer-toggle active" id="toggle-route-animation" aria-pressed="true">
+            <span class="toggle-dot" style="background: #f59e0b;"></span>
+            <span class="toggle-label">Line Animations</span>
+          </button>
+
+          <button type="button" class="layer-toggle active" id="toggle-islands" aria-pressed="true">
+            <span class="toggle-dot" style="background: var(--color-islands);"></span>
+            <span class="toggle-label">Personal Islands</span>
+            <span class="toggle-count" data-count-key="islands">67</span>
+            <span class="toggle-shortcut">4</span>
+          </button>
+
+          <button type="button" class="layer-toggle active" id="toggle-production" aria-pressed="true">
+            <span class="toggle-dot" style="background: var(--color-production);"></span>
+            <span class="toggle-label">Production Sites</span>
+            <span class="toggle-count" data-count-key="production">60</span>
+            <span class="toggle-shortcut">5</span>
+          </button>
+
+          <button type="button" class="layer-toggle active" id="toggle-altars" aria-pressed="true">
+            <span class="toggle-dot" style="background: var(--color-altars);"></span>
+            <span class="toggle-label">Altars</span>
+            <span class="toggle-count" data-count-key="altars">5</span>
+            <span class="toggle-shortcut">6</span>
+          </button>
+
+          <button type="button" class="layer-toggle active" id="toggle-forts" aria-pressed="true">
+            <span class="toggle-dot" style="background: var(--color-forts);"></span>
+            <span class="toggle-label">Forts</span>
+            <span class="toggle-count" data-count-key="forts">28</span>
+            <span class="toggle-shortcut">7</span>
+          </button>
+
+          <button type="button" class="layer-toggle active" id="toggle-pvp" aria-pressed="true">
+            <span class="toggle-dot" style="background: var(--color-pvp);"></span>
+            <span class="toggle-label">PVP Circle Border</span>
+            <span class="toggle-shortcut">8</span>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Personal Island Section -->
+      <div class="layer-section">
+        <button type="button" class="collapsible-header" id="personal-poi-header" aria-expanded="false">
+          <span class="chevron">&#9654;</span>
+          <span class="layer-section-title" id="section-title-myisland" style="padding: 0;">My Locations</span>
+        </button>
+        <div class="collapsible-body">
+          <button type="button" class="layer-toggle active" id="toggle-myisland" style="margin-top: 4px;"
+            aria-pressed="true">
+            <span class="toggle-dot" style="background: #22c55e;"></span>
+            <span class="toggle-label">My Locations</span>
+          </button>
+
+          <button type="button" class="layer-toggle active" id="toggle-radius" aria-pressed="true">
+            <span class="toggle-dot" style="background: #4ecdc4;"></span>
+            <span class="toggle-label">Island Radius (7nm)</span>
+          </button>
+
+          <button type="button" class="layer-toggle active" id="toggle-custom" aria-pressed="true">
+            <span class="toggle-dot" style="background: var(--color-custom);"></span>
+            <span class="toggle-label">Custom Markers</span>
+            <span class="toggle-shortcut">9</span>
+          </button>
+
+          <div id="personal-poi-list" class="personal-poi-list-shell">
+            <!-- Dynamically populated list of marked POIs -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend Section -->
+      <div class="layer-section">
+        <button type="button" class="collapsible-header" id="legend-header" aria-expanded="false">
+          <span class="chevron">&#9654;</span>
+          <span class="layer-section-title" id="section-title-legend" style="padding: 0;">Icon Legend</span>
+        </button>
+        <div class="collapsible-body">
+          <div class="legend-grid" id="legend-grid" style="padding: 4px 16px 0;">
+            <!-- Dynamically populated by applyLanguage -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyboard Shortcuts -->
+      <div class="layer-section">
+        <button type="button" class="collapsible-header" id="shortcuts-header" aria-expanded="false">
+          <span class="chevron">&#9654;</span>
+          <span class="layer-section-title" style="padding: 0;">Keyboard Shortcuts</span>
+        </button>
+        <div class="collapsible-body">
+          <div id="shortcuts-list"
+            style="padding: 8px 16px; font-size: 12px; color: var(--text-muted); line-height: 2;"></div>
+        </div>
+      </div>
+      <div class="layer-section">
+        <button type="button" class="collapsible-header" id="imprint-header" aria-expanded="false">
+          <span class="chevron">&#9654;</span>
+          <span class="layer-section-title" id="section-title-imprint" style="padding: 0;">Imprint</span>
+        </button>
+        <div class="collapsible-body">
+          <div class="imprint-panel" id="imprint-content">
+            <p>This website is an unofficial fan project.</p>
+            <p>All rights to World of Sea Battle and all associated names, logos, assets, trademarks, and game content remain with their respective rights holders, especially Thera Interactive as developer and publisher.</p>
+            <p>I am not affiliated with, endorsed by, sponsored by, or otherwise connected to Thera Interactive.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="export-buttons">
+        <button id="btn-export">â¬‡ Export Markers</button>
+        <button id="btn-import">â¬† Import Markers</button>
+      </div>
+      <div class="sidebar-utility-row sidebar-utility-row-footer">
+        <button type="button" id="collapse-all-toggle" class="collapse-all-btn">Collapse All</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-container" id="search-container">
+    <button type="button" class="search-trigger" id="search-trigger" title="Search" aria-label="Search"
+      aria-expanded="false">
+      <svg class="search-trigger-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8" />
+        <path d="M16.2 16.2L20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+      </svg>
+    </button>
+    <div class="search-field-shell">
+      <input type="text" id="search-input" placeholder="Search ports, islands, resources..." autocomplete="on">
+    </div>
+    <div id="search-results"></div>
+  </div>
+
+  <button id="sidebar-toggle" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+    <svg class="sidebar-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 7H20" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+      <path d="M4 12H20" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+      <path d="M4 17H20" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+    </svg>
+  </button>
+
+  <!-- Distance Info Bar -->
+  <div id="distance-info">
+    <span><span class="dist-label">Distance: </span><span class="dist-value">0 nm</span></span>
+    <button id="distance-clear">Clear All</button>
+  </div>
+
+  <!-- Custom Marker Dialog -->
+  <div id="modal-backdrop"></div>
+  <div id="marker-dialog" role="dialog" aria-modal="true" aria-labelledby="marker-dialog-title">
+    <h3 id="marker-dialog-title">ðŸ“Œ Add Custom Marker</h3>
+    <input type="text" id="marker-label-input" placeholder="Marker label..." maxlength="50">
+    <div class="dialog-buttons">
+      <button class="btn-cancel" id="marker-cancel">Cancel</button>
+      <button class="btn-confirm" id="marker-confirm">Add Marker</button>
+    </div>
+  </div>
+
+  <!-- Island Rename Dialog -->
+  <div id="island-dialog" role="dialog" aria-modal="true" aria-labelledby="island-dialog-title">
+    <h3 id="island-dialog-title">Name fÃ¼r deine Insel</h3>
+    <input type="text" id="island-label-input" placeholder="Name..." maxlength="50">
+    <div class="dialog-buttons">
+      <button class="btn-cancel" id="island-cancel">Abbrechen</button>
+      <button class="btn-confirm" id="island-confirm">Speichern</button>
+    </div>
+  </div>
+
+  <div id="context-menu" role="menu" aria-label="Map actions"></div>
+
+  <!-- Dark Mode Toggle (bottom-right) -->
+  <button id="btn-darkmode" class="dark-mode-fab" title="Toggle Dark Mode (D)" aria-label="Toggle Dark Mode (D)">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  </button>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="vendor/markercluster/leaflet.markercluster.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
+
+
+
+
+
